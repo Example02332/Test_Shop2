@@ -1,5 +1,8 @@
 
 
+<script src="{{ 'typed.min.js' | asset_url }}" defer></script>
+<script src="{{ 'hero-typed.js' | asset_url }}" type="module"></script>
+
 {% liquid
   assign media_count = 0
   assign media_count_mobile = 0
@@ -327,7 +330,18 @@
   {{ media_slot_2 }}
 
   {% if media_count == 0 %}
-    {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero__media' }}
+    <div class="{{ media_wrapper_desktop_class }}">
+      <img
+        src="{{ 'hero-background.jpg' | asset_url }}"
+        alt="{{ shop.name | escape }}"
+        class="hero__media"
+        width="1920"
+        height="1080"
+        loading="eager"
+        fetchpriority="{{ fetch_priority }}"
+        data-testid="hero-desktop-image-1"
+      >
+    </div>
   {%- endif -%}
 {% endcapture %}
 
@@ -359,7 +373,14 @@
     }}
   {% endif %}
   {% if media_count == 0 %}
-    {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero__media' }}
+    <img
+      src="{{ 'hero-background.jpg' | asset_url }}"
+      alt=""
+      class="hero__media"
+      width="1920"
+      height="1080"
+      loading="lazy"
+    >
   {% endif %}
 {% endcapture %}
 
@@ -510,6 +531,7 @@
     class="hero__container spacing-style section section--full-width"
     style="{% render 'spacing-style', settings: section.settings %}"
   >
+    <hero-typed></hero-typed>
     {%- if section.settings.link != blank -%}
       <a
         href="{{ section.settings.link }}"
@@ -521,7 +543,7 @@
     {%- endif -%}
     <div
       class="hero__media-grid"
-      style="--hero-media-count: {{ media_count }};--hero-media-count-mobile: {{ media_count_mobile }};{%- if section.settings.image_1 != blank -%} --hero-media-aspect-ratio: {{ section.settings.image_1.aspect_ratio }};{% endif %}"
+      style="--hero-media-count: {% if media_count == 0 %}1{% else %}{{ media_count }}{% endif %};--hero-media-count-mobile: {% if media_count_mobile == 0 %}1{% else %}{{ media_count_mobile }}{% endif %};{%- if section.settings.image_1 != blank -%} --hero-media-aspect-ratio: {{ section.settings.image_1.aspect_ratio }};{% endif %}"
       data-testid="hero-media-wrapper"
     >
       {% liquid
@@ -694,6 +716,35 @@
 
   .hero__content-wrapper--design-mode * {
     pointer-events: auto;
+  }
+
+  hero-typed {
+    display: none;
+  }
+
+  .typed-cursor {
+    opacity: 1;
+    animation: typed-blink 0.7s infinite;
+    color: inherit;
+    font-weight: 200;
+    margin-inline-start: 2px;
+    display: inline-block;
+  }
+
+  @keyframes typed-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typed-cursor {
+      animation: none;
+      display: none;
+    }
   }
 
   .hero[data-blur-shadow='true'] {
